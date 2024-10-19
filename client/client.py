@@ -29,6 +29,8 @@ def send_request(command):
 
     print("Server response:", response)
     diff_time_ms = (end_time - start_time) * 1000
+    print(f"🚀 {diff_time_ms}ms")
+    print("Command executed:", command)
 
     save_to_txt(command, diff_time_ms)
     client.close()
