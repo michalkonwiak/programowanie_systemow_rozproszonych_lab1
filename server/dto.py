@@ -1,32 +1,33 @@
-class Team:
-    def __init__(self, name):
-        self.name = name
+class Student:
+    def __init__(self, index):
+        self.index = index
 
-class League:
+class DeansOffice:
     def __init__(self):
-        self.teams = []
+        self.students = []
 
-    def add_team(self, team):
-        if not any(existing_team.name == team.name for existing_team in self.teams):
-            self.teams.append(team)
+    def add_student(self, student):
+        if not any(existing_student.index == student.index for existing_student in self.students):
+            self.students.append(student)
             return True
         return False
 
 
-    def update_team(self, old_name, new_name):
-        for team in self.teams:
-            if team.name == old_name:
-                team.name =  new_name
+    def update_student(self, old_index, new_index):
+        for student in self.students:
+            if student.index == old_index:
+                student.index =  new_index
                 return True
         return False
 
-    def delete_team(self, name):
-        self.teams = [team for team in self.teams if team.name != name]
+    def delete_student(self, index):
+        self.students = [student for student in self.students if student.index != index]
 
-    def get_teams(self):
-        return [team.name for team in self.teams]
+    def get_students(self):
+        return [student.index for student in self.students]
 
-    def generate_random_teams(self, amount=1000):
+    def generate_random_students(self, amount=1000):
         for i in range(amount):
-            self.add_team(Team(f"Team_{i}"))
+            index = str(i).zfill(6)
+            self.add_student(Student(f"s{index}"))
 
