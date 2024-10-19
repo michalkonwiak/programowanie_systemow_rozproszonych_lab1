@@ -33,7 +33,7 @@ def receive_data(client_socket):
             return None
         data += part
 
-    return data.decode('utf-8')
+    return data.decode("utf-8")
 
 
 def client_service(client_socket, address):
@@ -45,7 +45,7 @@ def client_service(client_socket, address):
             if not data:
                 break
 
-            command, *args = data.split(';')
+            command, *args = data.split(";")
             if command == "add" and validate_student_name(args[0]):
                 if deans_office.add_student(Student(args[0])):
                     result = "Student added"
@@ -63,7 +63,7 @@ def client_service(client_socket, address):
                 result = "Student deleted"
 
             elif command == "retrieve":
-                result = ', '.join(deans_office.get_students())
+                result = ", ".join(deans_office.get_students())
 
             elif command == "generate":
                 amount = int(args[0]) if args and args[0].isdigit() else 1000
@@ -73,7 +73,7 @@ def client_service(client_socket, address):
             else:
                 result = "Invalid command or input"
 
-            result_encoded = result.encode('utf-8')
+            result_encoded = result.encode("utf-8")
             client_socket.send(struct.pack("I", len(result_encoded)))
             client_socket.send(result_encoded)
     except Exception as e:
@@ -84,7 +84,7 @@ def client_service(client_socket, address):
 
 def run_server():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind(('localhost', 12345))
+    server.bind(("localhost", 12345))
     server.listen(1)
     print("Server is waiting for a connection")
 

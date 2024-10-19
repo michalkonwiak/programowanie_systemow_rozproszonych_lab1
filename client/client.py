@@ -6,7 +6,7 @@ import time
 
 def save_to_txt(command, diff_time_ms):
     data = command.split(";")
-    str = ''
+    str = ""
     for element in data:
         str += element + ","
 
