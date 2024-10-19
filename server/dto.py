@@ -1,6 +1,3 @@
-import random
-import time
-
 class Team:
     def __init__(self, name):
         self.name = name

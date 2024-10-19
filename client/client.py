@@ -1,14 +1,33 @@
 import socket
+import struct
+
 
 def send_request(command):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect(('localhost', 12345))
 
-    client.send(command.encode('utf-8'))
-    response = client.recv(1024).decode('utf-8')
+    command_encoded = command.encode('utf-8')
+    client.send(struct.pack("I", len(command_encoded)))
+    client.send(command_encoded)
+
+    response = receive_data(client)
     print("Server response:", response)
 
     client.close()
+
+
+def receive_data(client_socket):
+    response_length = struct.unpack("I", client_socket.recv(4))[0]
+    data = b""
+
+    while len(data) < response_length:
+        part = client_socket.recv(min(4096, response_length - len(data)))
+        if not part:
+            break
+        data += part
+
+    return data.decode('utf-8')
+
 
 def menu():
     while True:
@@ -41,6 +60,7 @@ def menu():
             break
         else:
             print("Incorrect choice")
+
 
 if __name__ == "__main__":
     menu()

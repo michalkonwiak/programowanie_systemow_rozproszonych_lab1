@@ -1,5 +1,6 @@
 import re
 import socket
+import struct
 import threading
 import csv
 import time
@@ -8,18 +9,39 @@ from dto import League, Team
 
 league = League()
 
-
 def validate_team_name(name):
     if re.match("^[A-Za-z0-9_]+$", name) and len(name) <= 30:
         return True
     return False
+
+
+def receive_data(client_socket):
+    data = b""
+
+    while len(data) < 4:
+        packet = client_socket.recv(4 - len(data))
+        if not packet:
+            return None
+        data += packet
+
+    response_length = struct.unpack("I", data)[0]
+
+    data = b""
+    while len(data) < response_length:
+        part = client_socket.recv(response_length - len(data))
+        if not part:
+            return None
+        data += part
+
+    return data.decode('utf-8')
+
 
 def client_service(client_socket, address):
     print(f"Connected to {address}")
 
     try:
         while True:
-            data = client_socket.recv(1024).decode('utf-8')
+            data = receive_data(client_socket)
             if not data:
                 break
 
@@ -61,7 +83,9 @@ def client_service(client_socket, address):
                 writer = csv.writer(f)
                 writer.writerow([args[0] if args else 'n/a', command, diff_time_ms])
 
-            client_socket.send(result.encode('utf-8'))
+            result_encoded = result.encode('utf-8')
+            client_socket.send(struct.pack("I", len(result_encoded)))
+            client_socket.send(result_encoded)
     except Exception as e:
         print(f"Error: {e}")
     finally:
